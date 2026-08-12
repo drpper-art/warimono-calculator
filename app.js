@@ -24,11 +24,12 @@ function ratioFromValues(values){
 const rows = $("#mixRows");
 const tpl = $("#rowTemplate");
 
-function addRow(name="", abv="", amount=""){
+function addRow(name="", abv="", amount="", dilution=1){
   const node=tpl.content.firstElementChild.cloneNode(true);
   $(".name",node).value=name;
   $(".abv",node).value=abv;
   $(".amount",node).value=amount;
+  $(".dilution",node).value=dilution || 1;
   $$("input",node).forEach(el=>el.addEventListener("input",calcMix));
   $(".delete",node).addEventListener("click",()=>{node.remove(); if(!rows.children.length)addRow(); calcMix();});
   rows.appendChild(node);
@@ -40,7 +41,8 @@ function calcMix(){
   const data=$$(".mix-row",rows).map(r=>({
     name:$(".name",r).value.trim() || "材料",
     amount:n($(".amount",r).value),
-    abv:n($(".abv",r).value)
+    abv:n($(".abv",r).value),
+    dilution:Math.max(1,n($(".dilution",r).value)||1)
   }));
   const total=data.reduce((s,x)=>s+x.amount,0);
   const alcohol=data.reduce((s,x)=>s+x.amount*(x.abv/100),0);
@@ -50,8 +52,29 @@ function calcMix(){
   const active=data.filter(x=>x.amount>0);
   $("#mixRatio").textContent=ratioFromValues(active.map(x=>x.amount));
   $("#mixBreakdown").textContent=active.length
-    ? active.map(x=>`${x.name} ${fmt(x.amount,1)}ml`).join(" / ")
+    ? active.map(x=>`${x.name} ${fmt(x.amount,1)}ml${x.dilution>1?`（${fmt(x.dilution,1)}倍）`:""}`).join(" / ")
     : "材料を入力すると表示されます";
+
+  const guide=$("#dilutionGuide");
+  const diluted=active.filter(x=>x.dilution>1);
+  if(!diluted.length){
+    guide.classList.add("hidden");
+    guide.innerHTML="";
+  }else{
+    const lines=diluted.map(x=>{
+      const requiredTotal=x.amount*x.dilution;
+      const requiredDiluent=x.amount*(x.dilution-1);
+      const otherAmount=Math.max(0,total-x.amount);
+      const diff=otherAmount-requiredDiluent;
+      let status="";
+      if(Math.abs(diff)<0.05) status="✓ ちょうど";
+      else if(diff>0) status=`割り材が ${fmt(diff,1)}ml 多め`;
+      else status=`割り材が ${fmt(-diff,1)}ml 不足`;
+      return `<div><strong>${x.name} ${fmt(x.dilution,1)}倍</strong><br>原液 ${fmt(x.amount,1)}ml → 完成時に必要な全体量 ${fmt(requiredTotal,1)}ml（原液以外 ${fmt(requiredDiluent,1)}ml）<br><b>${status}</b></div>`;
+    });
+    guide.innerHTML=lines.join("");
+    guide.classList.remove("hidden");
+  }
 }
 
 $("#addRowBtn").addEventListener("click",()=>addRow());
@@ -60,6 +83,7 @@ $$(".chips button").forEach(btn=>btn.addEventListener("click",()=>{
   const row=empty || addRow();
   $(".name",row).value=btn.dataset.name;
   $(".abv",row).value=btn.dataset.abv;
+  $(".dilution",row).value=btn.dataset.dilution || 1;
   $(".amount",row).focus();
   calcMix();
 }));
@@ -103,15 +127,17 @@ $$(".tab").forEach(tab=>tab.addEventListener("click",()=>{
 
 $("#resetBtn").addEventListener("click",()=>{
   rows.innerHTML="";
-  addRow("ウイスキー",40,30);
-  addRow("炭酸水",0,120);
+  addRow("カルピス原液",0,50,5);
+  addRow("焼酎",25,60,1);
+  addRow("炭酸水",0,140,1);
   $("#diluteTotal").value=500; $("#diluteFactor").value=5;
   $("#reverseSourceAbv").value=40; $("#reverseTargetAbv").value=5; $("#reverseTotal").value=500;
   calcDilute(); calcReverse();
 });
 
-addRow("ウイスキー",40,30);
-addRow("炭酸水",0,120);
+addRow("カルピス原液",0,50,5);
+addRow("焼酎",25,60,1);
+addRow("炭酸水",0,140,1);
 calcDilute();
 calcReverse();
 
