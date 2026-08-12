@@ -28,23 +28,28 @@
       <div class="section-head">
         <div>
           <h2>材料</h2>
-          <p>量とアルコール度数を入力してください。ソフトドリンクは0%。</p>
+          <p>量・アルコール度数・必要なら希釈倍率を入力。希釈しない材料は1倍です。</p>
         </div>
         <button id="addRowBtn" class="primary small">＋ 材料追加</button>
       </div>
 
+      <div class="mix-head">
+        <span>材料</span><span>量</span><span>度数</span><span>希釈</span><span></span>
+      </div>
       <div id="mixRows" class="rows"></div>
 
       <div class="quick-add">
         <span>よく使う材料</span>
         <div class="chips">
-          <button data-name="ウイスキー" data-abv="40">ウイスキー 40%</button>
-          <button data-name="焼酎" data-abv="25">焼酎 25%</button>
-          <button data-name="炭酸水" data-abv="0">炭酸水</button>
-          <button data-name="水" data-abv="0">水</button>
-          <button data-name="カルピス原液" data-abv="0">カルピス原液</button>
+          <button data-name="ウイスキー" data-abv="40" data-dilution="1">ウイスキー 40%</button>
+          <button data-name="焼酎" data-abv="25" data-dilution="1">焼酎 25%</button>
+          <button data-name="炭酸水" data-abv="0" data-dilution="1">炭酸水</button>
+          <button data-name="水" data-abv="0" data-dilution="1">水</button>
+          <button data-name="カルピス原液" data-abv="0" data-dilution="5">カルピス原液 5倍</button>
         </div>
       </div>
+
+      <div id="dilutionGuide" class="guide hidden"></div>
 
       <div class="result-grid">
         <div class="result-card">
@@ -66,7 +71,7 @@
 
     <section id="dilute" class="panel">
       <h2>○倍希釈</h2>
-      <p class="muted">例：カルピス5倍なら、原液1に対して水・炭酸水4です。</p>
+      <p class="muted">例：カルピス5倍なら、原液1に対して水・炭酸水など4です。</p>
 
       <div class="form-grid">
         <label>
@@ -148,6 +153,10 @@
       <div class="input-unit">
         <input class="abv" type="number" inputmode="decimal" min="0" max="100" step="0.1" placeholder="度数">
         <span>%</span>
+      </div>
+      <div class="input-unit dilution-unit">
+        <input class="dilution" type="number" inputmode="decimal" min="1" step="0.1" value="1" placeholder="1">
+        <span>倍</span>
       </div>
       <button class="delete" title="削除">×</button>
     </div>
