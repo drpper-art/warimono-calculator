@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#f4f4f6" />
+  <meta name="theme-color" content="#07111f" />
   <title>割りもの計算機</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="style.css" />
@@ -11,10 +11,7 @@
 <body>
   <main class="app">
     <header class="hero">
-      <div>
-        <h1>割りもの計算機</h1>
-        <p>お酒・ソフトドリンク・希釈をまとめて計算</p>
-      </div>
+      <div><h1>割りもの計算機</h1><p>お酒・ソフトドリンク・希釈をまとめて計算</p></div>
       <button id="resetBtn" class="ghost">リセット</button>
     </header>
 
@@ -25,155 +22,63 @@
     </section>
 
     <section id="mix" class="panel active">
-      <div class="section-head">
-        <div>
-          <h2>材料</h2>
-          <p>量・アルコール度数・必要なら希釈倍率を入力。希釈しない材料は1倍です。</p>
-        </div>
-        <button id="addRowBtn" class="primary small">＋ 材料追加</button>
-      </div>
-
-      <div class="mix-head">
-        <span>材料</span><span>量</span><span>度数</span><span>希釈</span><span></span>
-      </div>
+      <div class="section-head"><div><h2>材料</h2><p>量・アルコール度数・必要なら希釈倍率を入力。希釈しない材料は1倍です。</p></div><button id="addRowBtn" class="primary small">＋ 材料追加</button></div>
+      <div class="mix-head"><span>材料</span><span>量</span><span>度数</span><span>希釈</span><span></span></div>
       <div id="mixRows" class="rows"></div>
 
       <div class="quick-add">
-        <span>よく使う材料</span>
-        <div class="chips">
-          <button data-name="ウイスキー" data-abv="40" data-dilution="1">ウイスキー 40%</button>
-          <button data-name="焼酎" data-abv="25" data-dilution="1">焼酎 25%</button>
-          <button data-name="炭酸水" data-abv="0" data-dilution="1">炭酸水</button>
-          <button data-name="水" data-abv="0" data-dilution="1">水</button>
-          <button data-name="カルピス原液" data-abv="0" data-dilution="5">カルピス原液 5倍</button>
-        </div>
+        <div class="quick-title"><span>よく使う材料</span><button id="manageFavoritesBtn" class="mini-btn">編集</button></div>
+        <div id="favoriteChips" class="chips"></div>
+        <button id="addFavoriteBtn" class="favorite-add">＋ よく使う材料を登録</button>
       </div>
 
-      <div class="scale-box">
-        <div>
-          <strong>この割合のまま完成量を変更</strong>
-          <small>今の材料比率を保ったまま、各量を一括で逆算します。</small>
-        </div>
-        <div class="scale-controls">
-          <div class="input-unit"><input id="mixTargetTotal" type="number" inputmode="decimal" min="0" step="1" placeholder="完成量"><span>ml</span></div>
-          <button id="scaleMixBtn" class="primary">逆算する</button>
-        </div>
-        <div id="scaleWarning" class="warning hidden"></div>
-      </div>
-
+      <div class="scale-box"><div><strong>この割合のまま完成量を変更</strong><small>今の材料比率を保ったまま、各量を一括で逆算します。</small></div><div class="scale-controls"><div class="input-unit"><input id="mixTargetTotal" type="number" inputmode="decimal" min="0" step="1" placeholder="完成量"><span>ml</span></div><button id="scaleMixBtn" class="primary">逆算する</button></div><div id="scaleWarning" class="warning hidden"></div></div>
       <div id="dilutionGuide" class="guide hidden"></div>
-
-      <div class="result-grid">
-        <div class="result-card">
-          <span>完成量</span>
-          <strong id="mixTotal">0 ml</strong>
-        </div>
-        <div class="result-card accent">
-          <span>アルコール度数</span>
-          <strong id="mixAbv">0 %</strong>
-        </div>
-      </div>
-
-      <div class="ratio-card">
-        <span>割合</span>
-        <strong id="mixRatio">—</strong>
-        <small id="mixBreakdown">材料を入力すると表示されます</small>
-      </div>
+      <div class="result-grid"><div class="result-card"><span>完成量</span><strong id="mixTotal">0 ml</strong></div><div class="result-card accent"><span>アルコール度数</span><strong id="mixAbv">0 %</strong></div></div>
+      <div class="ratio-card"><span>割合</span><strong id="mixRatio">—</strong><small id="mixBreakdown">材料を入力すると表示されます</small></div>
     </section>
 
     <section id="dilute" class="panel">
-      <h2>○倍希釈</h2>
-      <p class="muted">例：カルピス5倍なら、原液1に対して水・炭酸水など4です。</p>
-
-      <div class="form-grid">
-        <label>
-          完成量
-          <div class="input-unit"><input id="diluteTotal" type="number" inputmode="decimal" min="0" step="1" value="500"><span>ml</span></div>
-        </label>
-        <label>
-          希釈倍率
-          <div class="input-unit"><input id="diluteFactor" type="number" inputmode="decimal" min="1" step="0.1" value="5"><span>倍</span></div>
-        </label>
-      </div>
-
-      <div class="result-grid">
-        <div class="result-card">
-          <span>原液</span>
-          <strong id="diluteBase">100 ml</strong>
-        </div>
-        <div class="result-card">
-          <span>水・炭酸水など</span>
-          <strong id="diluteMixer">400 ml</strong>
-        </div>
-      </div>
-      <div class="ratio-card">
-        <span>割合</span>
-        <strong id="diluteRatio">1 : 4</strong>
-      </div>
+      <h2>○倍希釈</h2><p class="muted">例：カルピス5倍なら、原液1に対して水・炭酸水など4です。</p>
+      <div class="form-grid"><label>完成量<div class="input-unit"><input id="diluteTotal" type="number" inputmode="decimal" min="0" step="1" value="500"><span>ml</span></div></label><label>希釈倍率<div class="input-unit"><input id="diluteFactor" type="number" inputmode="decimal" min="1" step="0.1" value="5"><span>倍</span></div></label></div>
+      <div class="result-grid"><div class="result-card"><span>原液</span><strong id="diluteBase">100 ml</strong></div><div class="result-card"><span>水・炭酸水など</span><strong id="diluteMixer">400 ml</strong></div></div>
+      <div class="ratio-card"><span>割合</span><strong id="diluteRatio">1 : 4</strong></div>
     </section>
 
     <section id="reverse" class="panel">
-      <h2>完成後の濃度から逆算</h2>
-      <p class="muted">例：40%のウイスキーで500ml・5%のハイボールを作る。</p>
-
-      <div class="form-grid">
-        <label>
-          お酒の度数
-          <div class="input-unit"><input id="reverseSourceAbv" type="number" inputmode="decimal" min="0" max="100" step="0.1" value="40"><span>%</span></div>
-        </label>
-        <label>
-          目標の度数
-          <div class="input-unit"><input id="reverseTargetAbv" type="number" inputmode="decimal" min="0" max="100" step="0.1" value="5"><span>%</span></div>
-        </label>
-        <label class="wide">
-          完成量
-          <div class="input-unit"><input id="reverseTotal" type="number" inputmode="decimal" min="0" step="1" value="500"><span>ml</span></div>
-        </label>
-      </div>
-
+      <h2>完成後の濃度から逆算</h2><p class="muted">例：40%のウイスキーで500ml・5%のハイボールを作る。</p>
+      <div class="form-grid"><label>お酒の度数<div class="input-unit"><input id="reverseSourceAbv" type="number" inputmode="decimal" min="0" max="100" step="0.1" value="40"><span>%</span></div></label><label>目標の度数<div class="input-unit"><input id="reverseTargetAbv" type="number" inputmode="decimal" min="0" max="100" step="0.1" value="5"><span>%</span></div></label><label class="wide">完成量<div class="input-unit"><input id="reverseTotal" type="number" inputmode="decimal" min="0" step="1" value="500"><span>ml</span></div></label></div>
       <div id="reverseWarning" class="warning hidden"></div>
-
-      <div class="result-grid">
-        <div class="result-card accent">
-          <span>お酒</span>
-          <strong id="reverseSpirit">62.5 ml</strong>
-        </div>
-        <div class="result-card">
-          <span>割り材</span>
-          <strong id="reverseMixer">437.5 ml</strong>
-        </div>
-      </div>
-      <div class="ratio-card">
-        <span>割合</span>
-        <strong id="reverseRatio">1 : 7</strong>
-        <small>割り材はアルコール0%として計算</small>
-      </div>
+      <div class="result-grid"><div class="result-card accent"><span>お酒</span><strong id="reverseSpirit">62.5 ml</strong></div><div class="result-card"><span>割り材</span><strong id="reverseMixer">437.5 ml</strong></div></div>
+      <div class="ratio-card"><span>割合</span><strong id="reverseRatio">1 : 7</strong><small>割り材はアルコール0%として計算</small></div>
     </section>
 
-    <footer>
-      <p>※ 実際のアルコール度数は製品表示や計量誤差などにより多少ずれる場合があります。</p>
-    </footer>
+    <footer><p>※ 実際のアルコール度数は製品表示や計量誤差などにより多少ずれる場合があります。</p></footer>
   </main>
 
-  <template id="rowTemplate">
-    <div class="mix-row">
-      <input class="name" type="text" placeholder="材料名">
-      <div class="input-unit">
-        <input class="amount" type="number" inputmode="decimal" min="0" step="1" placeholder="量">
-        <span>ml</span>
+  <div id="favoriteModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head"><div><h3 id="favoriteModalTitle">よく使う材料を登録</h3><p>この端末に保存されます。</p></div><button id="closeFavoriteModal" class="icon-btn">×</button></div>
+      <div class="favorite-form">
+        <label>材料名<input id="favoriteName" type="text" placeholder="例：いいちこ"></label>
+        <label>アルコール度数<div class="input-unit"><input id="favoriteAbv" type="number" inputmode="decimal" min="0" max="100" step="0.1" value="0"><span>%</span></div></label>
+        <label>希釈倍率<div class="input-unit"><input id="favoriteDilution" type="number" inputmode="decimal" min="1" step="0.1" value="1"><span>倍</span></div></label>
       </div>
-      <div class="input-unit">
-        <input class="abv" type="number" inputmode="decimal" min="0" max="100" step="0.1" placeholder="度数">
-        <span>%</span>
-      </div>
-      <div class="input-unit dilution-unit">
-        <input class="dilution" type="number" inputmode="decimal" min="1" step="0.1" value="1" placeholder="1">
-        <span>倍</span>
-      </div>
-      <button class="delete" title="削除">×</button>
+      <input id="favoriteEditIndex" type="hidden" value="">
+      <div id="favoriteFormWarning" class="warning hidden"></div>
+      <button id="saveFavoriteBtn" class="primary full">保存</button>
     </div>
-  </template>
+  </div>
 
+  <div id="favoriteManager" class="modal hidden" aria-hidden="true">
+    <div class="modal-card manager-card">
+      <div class="modal-head"><div><h3>よく使う材料を編集</h3><p>登録内容はこの端末だけに保存されます。</p></div><button id="closeFavoriteManager" class="icon-btn">×</button></div>
+      <div id="favoriteManagerList" class="favorite-manager-list"></div>
+      <button id="managerAddBtn" class="favorite-add">＋ 新しく登録</button>
+    </div>
+  </div>
+
+  <template id="rowTemplate"><div class="mix-row"><input class="name" type="text" placeholder="材料名"><div class="input-unit"><input class="amount" type="number" inputmode="decimal" min="0" step="1" placeholder="量"><span>ml</span></div><div class="input-unit"><input class="abv" type="number" inputmode="decimal" min="0" max="100" step="0.1" placeholder="度数"><span>%</span></div><div class="input-unit dilution-unit"><input class="dilution" type="number" inputmode="decimal" min="1" step="0.1" value="1" placeholder="1"><span>倍</span></div><button class="delete" title="削除">×</button></div></template>
   <script src="app.js"></script>
 </body>
 </html>
