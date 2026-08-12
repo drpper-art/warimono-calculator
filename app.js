@@ -37,13 +37,18 @@ function addRow(name="", abv="", amount="", dilution=1){
   return node;
 }
 
-function calcMix(){
-  const data=$$(".mix-row",rows).map(r=>({
+function getMixData(){
+  return $$(".mix-row",rows).map(r=>({
+    row:r,
     name:$(".name",r).value.trim() || "材料",
     amount:n($(".amount",r).value),
     abv:n($(".abv",r).value),
     dilution:Math.max(1,n($(".dilution",r).value)||1)
   }));
+}
+
+function calcMix(){
+  const data=getMixData();
   const total=data.reduce((s,x)=>s+x.amount,0);
   const alcohol=data.reduce((s,x)=>s+x.amount*(x.abv/100),0);
   const abv=total>0?alcohol/total*100:0;
@@ -76,6 +81,32 @@ function calcMix(){
     guide.classList.remove("hidden");
   }
 }
+
+function scaleMixToTarget(){
+  const warning=$("#scaleWarning");
+  warning.classList.add("hidden"); warning.textContent="";
+  const target=n($("#mixTargetTotal").value);
+  const data=getMixData();
+  const current=data.reduce((s,x)=>s+x.amount,0);
+  if(target<=0){
+    warning.textContent="完成量を0より大きい値で入力してください。";
+    warning.classList.remove("hidden");
+    return;
+  }
+  if(current<=0){
+    warning.textContent="先に材料の量を入力して割合を決めてください。";
+    warning.classList.remove("hidden");
+    return;
+  }
+  const factor=target/current;
+  data.forEach(x=>{
+    if(x.amount>0) $(".amount",x.row).value=(Math.round(x.amount*factor*10)/10).toString();
+  });
+  calcMix();
+}
+
+$("#scaleMixBtn").addEventListener("click",scaleMixToTarget);
+$("#mixTargetTotal").addEventListener("keydown",e=>{if(e.key==="Enter") scaleMixToTarget();});
 
 $("#addRowBtn").addEventListener("click",()=>addRow());
 $$(".chips button").forEach(btn=>btn.addEventListener("click",()=>{
@@ -130,6 +161,7 @@ $("#resetBtn").addEventListener("click",()=>{
   addRow("カルピス原液",0,50,5);
   addRow("焼酎",25,60,1);
   addRow("炭酸水",0,140,1);
+  $("#mixTargetTotal").value="";
   $("#diluteTotal").value=500; $("#diluteFactor").value=5;
   $("#reverseSourceAbv").value=40; $("#reverseTargetAbv").value=5; $("#reverseTotal").value=500;
   calcDilute(); calcReverse();
