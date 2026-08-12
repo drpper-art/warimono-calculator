@@ -49,6 +49,18 @@
         </div>
       </div>
 
+      <div class="scale-box">
+        <div>
+          <strong>この割合のまま完成量を変更</strong>
+          <small>今の材料比率を保ったまま、各量を一括で逆算します。</small>
+        </div>
+        <div class="scale-controls">
+          <div class="input-unit"><input id="mixTargetTotal" type="number" inputmode="decimal" min="0" step="1" placeholder="完成量"><span>ml</span></div>
+          <button id="scaleMixBtn" class="primary">逆算する</button>
+        </div>
+        <div id="scaleWarning" class="warning hidden"></div>
+      </div>
+
       <div id="dilutionGuide" class="guide hidden"></div>
 
       <div class="result-grid">
