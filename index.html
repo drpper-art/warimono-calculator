@@ -3,16 +3,24 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#07111f" />
+  <meta name="theme-color" content="#07111f" id="themeColorMeta" />
   <title>割りもの計算機</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="style.css" />
+  <script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('warimono-theme-v1')||'dark')}catch(e){}</script>
 </head>
 <body>
   <main class="app">
     <header class="hero">
       <div><h1>割りもの計算機</h1><p>お酒・ソフトドリンク・希釈をまとめて計算</p></div>
-      <button id="resetBtn" class="ghost">リセット</button>
+      <div class="hero-actions">
+        <div id="themeSwitch" class="theme-switch" role="group" aria-label="デザイン切り替え">
+          <button type="button" class="theme-dot" data-theme-btn="dark" title="ダーク" aria-label="ダークテーマ"></button>
+          <button type="button" class="theme-dot" data-theme-btn="light" title="ライト" aria-label="ライトテーマ"></button>
+          <button type="button" class="theme-dot" data-theme-btn="amber" title="アンバー" aria-label="アンバーテーマ"></button>
+        </div>
+        <button id="resetBtn" class="ghost">リセット</button>
+      </div>
     </header>
 
     <section class="tabs" role="tablist">

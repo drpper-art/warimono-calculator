@@ -24,4 +24,10 @@ function calcReverse(){const source=n($("#reverseSourceAbv").value),target=n($("
 $$('.tab').forEach(tab=>tab.addEventListener('click',()=>{$$('.tab').forEach(x=>x.classList.toggle('active',x===tab));$$('.panel').forEach(p=>p.classList.toggle('active',p.id===tab.dataset.tab))}));
 $("#resetBtn").addEventListener('click',()=>{rows.innerHTML='';addRow('カルピス原液',0,50,5);addRow('焼酎',25,60,1);addRow('炭酸水',0,140,1);$("#mixTargetTotal").value='';$("#diluteTotal").value=500;$("#diluteFactor").value=5;$("#reverseSourceAbv").value=40;$("#reverseTargetAbv").value=5;$("#reverseTotal").value=500;calcDilute();calcReverse()});
 renderFavorites();addRow('カルピス原液',0,50,5);addRow('焼酎',25,60,1);addRow('炭酸水',0,140,1);calcDilute();calcReverse();
+const THEME_KEY='warimono-theme-v1';const THEME_COLORS={dark:'#07111f',light:'#f4f6fb',amber:'#160d07'};
+function applyTheme(theme){document.documentElement.setAttribute('data-theme',theme);$$('.theme-dot').forEach(b=>b.classList.toggle('active',b.dataset.themeBtn===theme));const meta=$('#themeColorMeta');if(meta)meta.setAttribute('content',THEME_COLORS[theme]||THEME_COLORS.dark)}
+function loadTheme(){try{return localStorage.getItem(THEME_KEY)||'dark'}catch{return 'dark'}}
+applyTheme(loadTheme());
+$$('.theme-dot').forEach(b=>b.addEventListener('click',()=>{const theme=b.dataset.themeBtn;applyTheme(theme);try{localStorage.setItem(THEME_KEY,theme)}catch{}}));
+
 if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
