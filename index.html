@@ -41,6 +41,7 @@
     <section id="dilute" class="panel">
       <h2>○倍希釈</h2><p class="muted">例：カルピス5倍なら、原液1に対して水・炭酸水など4です。</p>
       <div class="form-grid"><label>完成量<div class="input-unit"><input id="diluteTotal" type="number" inputmode="decimal" min="0" step="1" value="500"><span>ml</span></div></label><label>希釈倍率<div class="input-unit"><input id="diluteFactor" type="number" inputmode="decimal" min="1" step="0.1" value="5"><span>倍</span></div></label></div>
+      <div id="diluteWarning" class="warning hidden"></div>
       <div class="result-grid"><div class="result-card"><span>原液</span><strong id="diluteBase">100 ml</strong></div><div class="result-card"><span>水・炭酸水など</span><strong id="diluteMixer">400 ml</strong></div></div>
       <div class="ratio-card"><span>割合</span><strong id="diluteRatio">1 : 4</strong></div>
     </section>
