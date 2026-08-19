@@ -88,6 +88,24 @@
     update();
   }
 
+  function keepDigitsOnly(el) {
+    const cleaned = el.value.replace(/\D/g, '');
+    if (el.value !== cleaned) el.value = cleaned;
+  }
+
+  function enableTapSelectAll(el) {
+    const selectAll = () => {
+      window.requestAnimationFrame(() => {
+        try {
+          el.select();
+        } catch (_) {}
+      });
+    };
+
+    el.addEventListener('focus', selectAll);
+    el.addEventListener('click', selectAll);
+  }
+
   document.querySelectorAll('[data-time]').forEach((button) => {
     button.addEventListener('click', () => setTimeFromSeconds(Number(button.dataset.time)));
   });
@@ -100,7 +118,13 @@
   });
 
   [minutesEl, secondsEl, targetWattEl].forEach((el) => {
-    el.addEventListener('input', update);
+    enableTapSelectAll(el);
+
+    el.addEventListener('input', () => {
+      keepDigitsOnly(el);
+      update();
+    });
+
     el.addEventListener('change', () => {
       const { minutes, seconds, targetWatt } = normalizeInputs();
       minutesEl.value = String(minutes);
