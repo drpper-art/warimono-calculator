@@ -28,12 +28,12 @@
       <div class="time-inputs">
         <label class="number-field">
           <span>分</span>
-          <input id="minutes" type="number" inputmode="numeric" min="0" max="999" step="1" value="3" aria-label="基準の分" />
+          <input id="minutes" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" value="3" aria-label="基準の分" />
         </label>
         <div class="time-separator">:</div>
         <label class="number-field">
           <span>秒</span>
-          <input id="seconds" type="number" inputmode="numeric" min="0" max="59" step="1" value="0" aria-label="基準の秒" />
+          <input id="seconds" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" value="0" aria-label="基準の秒" />
         </label>
       </div>
 
@@ -63,7 +63,7 @@
       <label class="custom-watt">
         <span>その他</span>
         <div class="custom-watt-input">
-          <input id="targetWatt" type="number" inputmode="numeric" min="100" max="3000" step="10" value="600" aria-label="換算先ワット数" />
+          <input id="targetWatt" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" value="600" aria-label="換算先ワット数" />
           <strong>W</strong>
         </div>
       </label>
