@@ -69,3 +69,5 @@ button { -webkit-tap-highlight-color: transparent; }
   .result-time { transition: opacity .12s ease, transform .12s ease; }
   .result-time.flash { opacity: .6; transform: scale(.985); }
 }
+
+.source-watt { margin-bottom: 18px; }

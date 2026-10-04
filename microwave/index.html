@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#f7f5f0" />
-  <meta name="description" content="500Wの電子レンジ加熱時間を600W・700W・1000Wなどへ簡単換算するWebアプリ" />
+  <meta name="description" content="500Wを初期値に、電子レンジの基準ワット数と使用するワット数を選んで加熱時間を簡単換算するWebアプリ" />
   <title>レンジ時間換算</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -13,17 +13,32 @@
     <header class="hero">
       <div class="eyebrow">MICROWAVE CONVERTER</div>
       <h1>レンジ時間換算</h1>
-      <p>500Wの加熱時間から、使いたいワット数の時間をすぐ計算。</p>
+      <p>表示されているワット数と加熱時間から、使いたいワット数の時間をすぐ計算。</p>
     </header>
 
     <section class="card source-card" aria-labelledby="source-heading">
       <div class="section-head">
         <div>
           <p class="kicker">基準</p>
-          <h2 id="source-heading">500W の表示時間</h2>
+          <h2 id="source-heading">表示されている加熱時間</h2>
         </div>
-        <span class="watt-badge">500W</span>
+        <span class="watt-badge" id="sourceWattBadge">500W</span>
       </div>
+
+      <div class="watt-buttons" id="sourceWattButtons" aria-label="基準ワット数のクイック選択">
+        <button type="button" data-source-watt="500" class="active" aria-pressed="true">500W</button>
+        <button type="button" data-source-watt="600" aria-pressed="false">600W</button>
+        <button type="button" data-source-watt="700" aria-pressed="false">700W</button>
+        <button type="button" data-source-watt="1000" aria-pressed="false">1000W</button>
+      </div>
+
+      <label class="custom-watt source-watt">
+        <span>基準のW数</span>
+        <div class="custom-watt-input">
+          <input id="sourceWatt" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" value="500" aria-label="基準ワット数" />
+          <strong>W</strong>
+        </div>
+      </label>
 
       <div class="time-inputs">
         <label class="number-field">

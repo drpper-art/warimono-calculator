@@ -1,11 +1,14 @@
 (() => {
   'use strict';
 
-  const BASE_WATT = 500;
+  const DEFAULT_SOURCE_WATT = 500;
   const COMMON_WATTS = [500, 600, 700, 800, 1000, 1200, 1500];
 
   const minutesEl = document.getElementById('minutes');
   const secondsEl = document.getElementById('seconds');
+  const sourceWattEl = document.getElementById('sourceWatt');
+  const sourceWattBadgeEl = document.getElementById('sourceWattBadge');
+  const sourceWattButtonsEl = document.getElementById('sourceWattButtons');
   const targetWattEl = document.getElementById('targetWatt');
   const resultWattEl = document.getElementById('resultWatt');
   const resultTimeEl = document.getElementById('resultTime');
@@ -20,8 +23,9 @@
   function normalizeInputs() {
     const minutes = clamp(Number.parseInt(minutesEl.value || '0', 10) || 0, 0, 999);
     const seconds = clamp(Number.parseInt(secondsEl.value || '0', 10) || 0, 0, 59);
+    const sourceWatt = clamp(Number.parseInt(sourceWattEl.value || String(DEFAULT_SOURCE_WATT), 10) || DEFAULT_SOURCE_WATT, 100, 3000);
     const targetWatt = clamp(Number.parseInt(targetWattEl.value || '600', 10) || 600, 100, 3000);
-    return { minutes, seconds, targetWatt };
+    return { minutes, seconds, sourceWatt, targetWatt };
   }
 
   function formatTime(totalSeconds, padSeconds = false) {
@@ -40,20 +44,21 @@
     return `${minutes}分${String(seconds).padStart(2, '0')}秒`;
   }
 
-  function convertedSeconds(sourceSeconds, targetWatt) {
-    if (sourceSeconds <= 0 || targetWatt <= 0) return 0;
-    return sourceSeconds * BASE_WATT / targetWatt;
+  function convertedSeconds(sourceSeconds, sourceWatt, targetWatt) {
+    if (sourceSeconds <= 0 || sourceWatt <= 0 || targetWatt <= 0) return 0;
+    return sourceSeconds * sourceWatt / targetWatt;
   }
 
   function setActiveWattButton(targetWatt) {
     wattButtonsEl.querySelectorAll('[data-watt]').forEach((button) => {
       button.classList.toggle('active', Number(button.dataset.watt) === targetWatt);
+      button.setAttribute('aria-pressed', String(Number(button.dataset.watt) === targetWatt));
     });
   }
 
-  function renderComparison(sourceSeconds, targetWatt) {
+  function renderComparison(sourceSeconds, sourceWatt, targetWatt) {
     comparisonListEl.innerHTML = COMMON_WATTS.map((watt) => {
-      const time = watt === BASE_WATT ? sourceSeconds : convertedSeconds(sourceSeconds, watt);
+      const time = convertedSeconds(sourceSeconds, sourceWatt, watt);
       const currentClass = watt === targetWatt ? ' current' : '';
       return `
         <div class="comparison-row${currentClass}">
@@ -64,22 +69,31 @@
   }
 
   function update() {
-    const { minutes, seconds, targetWatt } = normalizeInputs();
+    const { minutes, seconds, sourceWatt, targetWatt } = normalizeInputs();
     const sourceSeconds = minutes * 60 + seconds;
-    const resultSeconds = convertedSeconds(sourceSeconds, targetWatt);
+    const resultSeconds = convertedSeconds(sourceSeconds, sourceWatt, targetWatt);
 
+    sourceWattBadgeEl.textContent = `${sourceWatt}W`;
+    sourceWattButtonsEl.querySelectorAll('[data-source-watt]').forEach((button) => {
+      const active = Number(button.dataset.sourceWatt) === sourceWatt;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
     resultWattEl.textContent = `${targetWatt}W`;
     resultTimeEl.classList.add('flash');
     resultTimeEl.textContent = formatTime(resultSeconds, true);
-    resultSubEl.textContent = `500W・${formatSourceTime(sourceSeconds)} と同じ加熱量の目安`;
+    resultSubEl.textContent = `${sourceWatt}W・${formatSourceTime(sourceSeconds)} と同じ加熱量の目安`;
     window.setTimeout(() => resultTimeEl.classList.remove('flash'), 100);
 
     setActiveWattButton(targetWatt);
-    renderComparison(sourceSeconds, targetWatt);
+    renderComparison(sourceSeconds, sourceWatt, targetWatt);
 
     try {
+      localStorage.setItem('microwaveSourceWatt', String(sourceWatt));
       localStorage.setItem('microwaveTargetWatt', String(targetWatt));
-    } catch (_) {}
+    } catch (_) {
+      // Storage may be unavailable in private browsing; calculation still works.
+    }
   }
 
   function setTimeFromSeconds(totalSeconds) {
@@ -117,27 +131,37 @@
     });
   });
 
-  [minutesEl, secondsEl, targetWattEl].forEach((el) => {
-    enableTapSelectAll(el);
+  sourceWattButtonsEl.querySelectorAll('[data-source-watt]').forEach((button) => {
+    button.addEventListener('click', () => {
+      sourceWattEl.value = button.dataset.sourceWatt;
+      update();
+    });
+  });
 
+  [minutesEl, secondsEl, sourceWattEl, targetWattEl].forEach((el) => {
+    enableTapSelectAll(el);
     el.addEventListener('input', () => {
       keepDigitsOnly(el);
       update();
     });
-
     el.addEventListener('change', () => {
-      const { minutes, seconds, targetWatt } = normalizeInputs();
+      const { minutes, seconds, sourceWatt, targetWatt } = normalizeInputs();
       minutesEl.value = String(minutes);
       secondsEl.value = String(seconds);
+      sourceWattEl.value = String(sourceWatt);
       targetWattEl.value = String(targetWatt);
       update();
     });
   });
 
   try {
+    const savedSourceWatt = Number.parseInt(localStorage.getItem('microwaveSourceWatt') || '', 10);
+    if (savedSourceWatt >= 100 && savedSourceWatt <= 3000) sourceWattEl.value = String(savedSourceWatt);
     const savedWatt = Number.parseInt(localStorage.getItem('microwaveTargetWatt') || '', 10);
     if (savedWatt >= 100 && savedWatt <= 3000) targetWattEl.value = String(savedWatt);
-  } catch (_) {}
+  } catch (_) {
+    // Ignore storage errors.
+  }
 
   update();
 })();
